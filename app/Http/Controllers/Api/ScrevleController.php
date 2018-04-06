@@ -16,6 +16,14 @@ class ScrevleController extends Controller
         $this->screvle = $screvle;
     }
 
+    public function index() {
+        $data = [
+            'screvles' => $this->screvle->all(),
+        ];
+
+        return view('screvle.index', $data);
+    }
+
     public function add(Request $request) {
         Log::info('request', [$request->all()]);
 

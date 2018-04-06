@@ -18,3 +18,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('/screvle/add', 'Api\ScrevleController@add');
+Route::get('/screvle', 'Api\ScrevleController@index');
