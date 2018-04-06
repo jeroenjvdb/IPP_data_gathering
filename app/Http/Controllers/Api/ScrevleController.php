@@ -22,7 +22,7 @@ class ScrevleController extends Controller
             $screvle->data = [
                 'f_bottom' => hexdec(substr($screvle->payload, 2,2)),
                 'v_measure' => hexdec(substr($screvle->payload, 4,2)),
-                'seconds' => hexdec(substr($screvle->payload, 6,2)),
+                'seconds' => hexdec(substr($screvle->payload, 6,2))/2,
                 'minutes' => hexdec(substr($screvle->payload, 8,2)),
                 'hours' => hexdec(substr($screvle->payload, 10,2)),
             ];
