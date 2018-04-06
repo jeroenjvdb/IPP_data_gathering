@@ -17,8 +17,20 @@ class ScrevleController extends Controller
     }
 
     public function index() {
+        $screvles = $this->screvle->all();
+        foreach($screvles as $screvle) {
+            $screvle->data = [
+                'f_bottom' => hexdec(substr($screvle->payload, 2,2)),
+                'v_measure' => hexdec(substr($screvle->payload, 4,2)),
+                'seconds' => hexdec(substr($screvle->payload, 6,2)),
+                'minutes' => hexdec(substr($screvle->payload, 8,2)),
+                'hours' => hexdec(substr($screvle->payload, 10,2)),
+            ];
+        }
+
+
         $data = [
-            'screvles' => $this->screvle->all(),
+            'screvles' => $screvles,
         ];
 
         return view('screvle.index', $data);
