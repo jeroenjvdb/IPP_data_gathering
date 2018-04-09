@@ -8,6 +8,7 @@
         <td>time left</td>
         <th>address</th>
         <th>type</th>
+	<th>created at</th>
     </thead>
     <tbody>
         @foreach($screvles as $screvle)
@@ -16,6 +17,7 @@
                 <td>{{ $screvle->data['hours'] . 'h ' . $screvle->data['minutes'] . 'm ' . $screvle->data['seconds'] . 's' }}</td>
                 <td>{{ $screvle->address }}</td>
                 <td>{{ $screvle->type }}</td>
+		<td>{{ $screvle->created_at }}</td>
             </tr>
         @endforeach
     </tbody>

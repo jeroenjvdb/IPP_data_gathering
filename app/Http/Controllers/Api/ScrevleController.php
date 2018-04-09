@@ -17,7 +17,7 @@ class ScrevleController extends Controller
     }
 
     public function index() {
-        $screvles = $this->screvle->all();
+        $screvles = $this->screvle->orderBy('created_at', 'DESC')->get();
         foreach($screvles as $screvle) {
             $screvle->data = [
                 'f_bottom' => hexdec(substr($screvle->payload, 2,2)),
