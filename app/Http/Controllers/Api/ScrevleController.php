@@ -6,14 +6,19 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\Screvle;
+use App\Urinal;
+use App\UrinalData;
 use Log;
 
 class ScrevleController extends Controller
 {
     private $screvle;
 
-    public function __construct(Screvle $screvle) {
+    private $urinal;
+
+    public function __construct(Screvle $screvle, Urinal $urinal) {
         $this->screvle = $screvle;
+        $this->urinal = $urinal;
     }
 
     public function index() {
@@ -31,19 +36,76 @@ class ScrevleController extends Controller
 
         $data = [
             'screvles' => $screvles,
+			'urinals' => $this->urinal->all(),
         ];
 
         return view('screvle.index', $data);
     }
 
+/* Guillaume : Addon for HMI */
+    public function hmi() {
+
+	$screvles = $this->screvle->where('type', 66)->orderBy('created_at', 'DESC')->get();
+	foreach($screvles as $parser) {
+		$parser->data = [
+			'nb_flush' => hexdec(substr($parser->payload, 2, 2)),
+			'clogged' => hexdec(substr($parser->payload, 6, 2)),
+			'congestion' => hexdec(substr($parser->payload, 8, 2)),
+			'nb_mkey' => hexdec(substr($parser->payload, 10, 2)),
+			't_evac' => hexdec(substr($parser->payload, 14, 2)),
+			];
+	} 
+
+	$urinals = $this->urinal->with(['data' => function($query) {
+		return $query->orderBy('created_at', 'DESC');
+	}])->get();
+
+	foreach($urinals as $urinal) {
+		$urinal->lastClog = $urinal->data()->orderBy('created_at','DESC')->where('clogged',true)->first();
+		$urinal->lastCongestion = $urinal->data()->orderBy('created_at','DESC')->where('congestion',true	)->first();
+	}
+
+
+
+	$data = [
+		'screvles' => $screvles,
+		'urinals' => $urinals,
+	];
+
+	//dd($data['urinals']);
+
+	return view('screvle.hmi', $data);
+    }
+
+/* Guillaume : end */
+
     public function add(Request $request) {
         Log::info('request', [$request->all()]);
+	$data = [
+	    'nb_flush' => hexdec(substr($request->data, 2, 2)),
+	    'clogged' => hexdec(substr($request->data, 6, 2)),
+	    'congestion' => hexdec(substr($request->data, 8, 2)),
+	    'nb_mkey' => hexdec(substr($request->data, 10, 2)),
+	    't_evac' => hexdec(substr($request->data, 14, 2)),
+	];
+	Log::info('parsed request', $data);	
+
 
         $this->screvle->create([
             'payload' => $request->data,
             'address' => $request->address,
             'type' => $request->type,
         ]);
+
+        $this->urinal->find($request->address)->data()->create([
+		    'payload' => $request->data,
+		    'address' => $request->address,
+		    'type'    => $request->type,
+		    'nb_flush'=> hexdec($data['nb_flush']),
+		    'clogged' => $data['clogged'] ? true : false,
+		    'nb_mkey' => $data['congestion'] ? true : false,
+		    't_evac'  => hexdec($data['t_evac']),
+		]);
 
         return "true";
     }

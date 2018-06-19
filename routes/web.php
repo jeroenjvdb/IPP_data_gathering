@@ -16,3 +16,4 @@ Route::get('/', function () {
 });
 
 Route::get('/screvle', 'Api\ScrevleController@index');
+Route::get('/ipeecloud','Api\ScrevleController@hmi');
