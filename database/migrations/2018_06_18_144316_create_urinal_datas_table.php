@@ -16,16 +16,16 @@ class CreateUrinalDatasTable extends Migration
         Schema::create('urinal_datas', function (Blueprint $table) {
             $table->increments('id');
 
-	    $table->integer('device_id')->unsigned();
+            $table->integer('device_id')->unsigned();
 
-	    $table->integer('type')->nullable();
-	    $table->integer('nb_flush')->nullable();
-	    $table->boolean('congestion')->default(false);
-	    $table->boolean('clogged')->default(false);
-	    $table->integer('nb_mkey');
-	    $table->integer('t_evac');
+            $table->integer('type')->nullable();
+            $table->integer('nb_flush')->nullable();
+            $table->boolean('congestion')->default(false);
+            $table->boolean('clogged')->default(false);
+            $table->integer('nb_mkey');
+            $table->integer('t_evac');
 
-	    $table->string('address')->nullable();
+            $table->string('address')->nullable();
             $table->string('payload')->nullable();
 
             $table->timestamps();

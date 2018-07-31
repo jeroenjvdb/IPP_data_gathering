@@ -19,7 +19,7 @@ class FlushController extends Controller
     }
 
     public function index($urinal) {
-        $data = Urinal::where('id', $urinal)->first()->data()->orderBy('created_at', 'DESC')->get();
+        $data = Urinal::where('id', $urinal)->first()->uData()->orderBy('created_at', 'DESC')->get();
 
         return $data;
     }

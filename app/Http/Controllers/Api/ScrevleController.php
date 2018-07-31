@@ -79,8 +79,12 @@ class ScrevleController extends Controller
     }
 
 /* Guillaume : end */
+	protected function littleToBigEndian($little) {
+		return implode('',array_reverse(str_split($little,2)));
+	}
 
-    public function add(Request $request) {
+	public function add(Request $request) 
+	{
         Log::info('request', [$request->all()]);
 		$data = [
 			'nb_flush' => hexdec(substr($request->data, 2, 2)),
@@ -88,6 +92,20 @@ class ScrevleController extends Controller
 			'congestion' => hexdec(substr($request->data, 8, 2)),
 			'nb_mkey' => hexdec(substr($request->data, 10, 2)),
 			't_evac' => hexdec(substr($request->data, 14, 2)),
+		];
+
+
+
+		$uData = [
+			'payload' => $request->data,
+			'address' => $request->address,	
+		    'type'    => $request->type,					
+			'nb_flush' => hexdec(substr($request->data, 2, 2)),
+			'nb_user' => hexdec(substr($request->data, 4, 2)),
+			'status' => hexdec(substr($request->data, 6, 2)),
+			'user_flush_time' => hexdec(substr($request->data, 8, 2)),
+			'key_present_ev' => hexdec($this->littleToBigEndian(substr($request->data, 10, 2))),
+			'flush_time' => hexdec($this->littleToBigEndian(substr($request->data, 14, 2))),
 		];
 		Log::info('parsed request', $data);	
 
@@ -107,10 +125,15 @@ class ScrevleController extends Controller
 		    't_evac'  => hexdec($data['t_evac']),
 		]);
 
+		$uFlush = $this->urinal->find($request->address)->uData()
+			->create($uData);
+
 		$channelName = 'flush.' . $flush->device_id;
 
-		event(new FlushEvent($channelName, $flush));
+		event(new FlushEvent($channelName, $uFlush));
 
         return "true";
-    }
+	}
+	
+	
 }
