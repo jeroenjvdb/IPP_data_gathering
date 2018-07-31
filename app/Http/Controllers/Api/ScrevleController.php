@@ -9,6 +9,7 @@ use App\Screvle;
 use App\Urinal;
 use App\UrinalData;
 use Log;
+use App\Events\FlushEvent;
 
 class ScrevleController extends Controller
 {
@@ -39,7 +40,7 @@ class ScrevleController extends Controller
 			'urinals' => $this->urinal->all(),
         ];
 
-        return view('screvle.index', $data);
+        return $data;//view('screvle.index', $data);
     }
 
 /* Guillaume : Addon for HMI */
@@ -81,15 +82,14 @@ class ScrevleController extends Controller
 
     public function add(Request $request) {
         Log::info('request', [$request->all()]);
-	$data = [
-	    'nb_flush' => hexdec(substr($request->data, 2, 2)),
-	    'clogged' => hexdec(substr($request->data, 6, 2)),
-	    'congestion' => hexdec(substr($request->data, 8, 2)),
-	    'nb_mkey' => hexdec(substr($request->data, 10, 2)),
-	    't_evac' => hexdec(substr($request->data, 14, 2)),
-	];
-	Log::info('parsed request', $data);	
-
+		$data = [
+			'nb_flush' => hexdec(substr($request->data, 2, 2)),
+			'clogged' => hexdec(substr($request->data, 6, 2)),
+			'congestion' => hexdec(substr($request->data, 8, 2)),
+			'nb_mkey' => hexdec(substr($request->data, 10, 2)),
+			't_evac' => hexdec(substr($request->data, 14, 2)),
+		];
+		Log::info('parsed request', $data);	
 
         $this->screvle->create([
             'payload' => $request->data,
@@ -97,7 +97,7 @@ class ScrevleController extends Controller
             'type' => $request->type,
         ]);
 
-        $this->urinal->find($request->address)->data()->create([
+        $flush = $this->urinal->find($request->address)->data()->create([
 		    'payload' => $request->data,
 		    'address' => $request->address,
 		    'type'    => $request->type,
@@ -106,6 +106,10 @@ class ScrevleController extends Controller
 		    'nb_mkey' => $data['congestion'] ? true : false,
 		    't_evac'  => hexdec($data['t_evac']),
 		]);
+
+		$channelName = 'flush.' . $flush->device_id;
+
+		event(new FlushEvent($channelName, $flush));
 
         return "true";
     }

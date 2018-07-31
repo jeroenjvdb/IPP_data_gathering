@@ -14,8 +14,7 @@
 <p>last congestion: {{ $urinal->lastCongestion ? Carbon\Carbon::parse($urinal->lastCongestion->created_at)->format('dS M Y') : "/" }}</p>
 <p>last clogged:  {{ $urinal->lastClogged ? Carbon\Carbon::parse($urinal->lastClogged->created_at)->format('dS M Y') : "/" }}</p>
 <p>packets received since startup {{ $urinal->data()->count() }}  </p>
-<p>last packet received {{ Carbon\Carbon::parse($urinal->data->first()->created_at)->format('dS M Y H:i') }}
-
+<p>last packet received {{ $urinal->data->first() ? Carbon\Carbon::parse($urinal->data->first()->created_at)->format('dS M Y H:i'):'' }}
 </div>
 @endforeach
 </div>
