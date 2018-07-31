@@ -17,3 +17,10 @@ Route::get('/', function () {
 
 Route::get('/screvle', 'Api\ScrevleController@index');
 Route::get('/ipeecloud','Api\ScrevleController@hmi');
+
+Route::get('/publish', function () {
+    // Route logic...
+
+    Redis::publish('test-channel', json_encode(['foo' => 'ba']));
+    Redis::publish('flush-channel', json_encode(['pee' => 'flush']));
+});

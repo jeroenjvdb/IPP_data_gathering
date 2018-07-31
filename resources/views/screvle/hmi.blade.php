@@ -14,8 +14,7 @@
 <p>last congestion: {{ $urinal->lastCongestion ? $urinal->lastCongestion->created_at : "/" }}</p>
 <p>last clogged:  {{ $urinal->lastClogged ? $urinal->lastClogged->created_at : "/" }}</p>
 <p>packets received since startup {{ $urinal->data()->count() }}  </p>
-<p>last packet received {{ $urinal->data->first()->created_at }}
-
+<p>last packet received {{ $urinal->data->first() ? $urinal->data->first()->created_at : '' }}
 </div>
 @endforeach
 </div>
