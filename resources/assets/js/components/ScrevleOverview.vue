@@ -58,7 +58,7 @@
 
             connectSocket() {
                 // Connect to Socket.io
-                this.socket = window.io(`http://192.168.56.101:3000`);
+                this.socket = window.io(`http://192.168.1.175:3000`);
             }
         }
     }
