@@ -25,16 +25,16 @@ class UData extends Model
         'clogged',
     ];
 
-    public $casts = [
+    protected $casts = [
         'congestion' => 'boolean',
         'clogged' => 'boolean',
     ];
 
     public function getCloggedAttribute() {
-        return $this->status & 1;
+        return ($this->status & 1) > 0;
     }
 
     public function getCongestionAttribute() {
-        return $this->status & 2;
+        return ($this->status & 2) > 0;
     }
 }
