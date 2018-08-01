@@ -23,7 +23,11 @@ class UData extends Model
     public $appends = [
         'congestion',
         'clogged',
+    ];
 
+    public $casts = [
+        'congestion' => 'boolean',
+        'clogged' => 'boolean',
     ];
 
     public function getCloggedAttribute() {
