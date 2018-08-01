@@ -34448,7 +34448,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                                 this.socket.on("flush." + this.device.id + ".App\\Events\\FlushEvent", function (data) {
                                     console.log(_this);
                                     console.log(_this.allFlushes);
-                                    _this.allFlushes = [].concat(_toConsumableArray(_this.allFlushes), [data]);
+                                    _this.allFlushes = [data.data.data].concat(_toConsumableArray(_this.allFlushes));
                                     _this.updateLastFlush(_this.allFlushes);
                                     console.log(_this.allFlushes);
                                     //this.allFlushes = [...this.all.]

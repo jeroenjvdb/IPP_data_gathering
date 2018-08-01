@@ -64,7 +64,7 @@ export default {
            this.socket.on(`flush.${this.device.id}.App\\Events\\FlushEvent`, (data) => {
                 console.log(this);
                 console.log(this.allFlushes);
-                this.allFlushes = [ ...this.allFlushes, data];
+                this.allFlushes = [ data.data.data, ...this.allFlushes];
                 this.updateLastFlush(this.allFlushes);
                 console.log(this.allFlushes);
                 //this.allFlushes = [...this.all.]
