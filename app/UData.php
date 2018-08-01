@@ -27,10 +27,10 @@ class UData extends Model
     ];
 
     public function getCloggedAttribute() {
-        return $this->status == 1;
+        return $this->status & 1;
     }
 
     public function getCongestionAttribute() {
-        return $this->status == 2;
+        return $this->status & 2;
     }
 }
