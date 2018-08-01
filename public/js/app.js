@@ -34422,10 +34422,14 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         },
         updateLastFlush: function updateLastFlush(data) {
             this.lastFlush = data[0];
-            //const lastCongestionObj = data.find(val => val.congestion == true)
-            //this.lastCongestion = lastCongestionObj ? lastCongestionObj.created_at : "";
-            //const lastCloggedObj = data.find(val => val.clogged == true)
-            //this.lastClogged = lastCloggedObj ? lastCloggedObj.created_at : "";
+            var lastCongestionObj = data.find(function (val) {
+                return val.congestion == true;
+            });
+            this.lastCongestion = lastCongestionObj ? lastCongestionObj.created_at : "";
+            var lastCloggedObj = data.find(function (val) {
+                return val.clogged == true;
+            });
+            this.lastClogged = lastCloggedObj ? lastCloggedObj.created_at : "";
         },
         subscribe: function () {
             var _ref2 = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee2() {
@@ -34511,7 +34515,10 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("p", [
-      _vm._v("last packet received " + _vm._s(this.lastFlush.created_at))
+      _vm._v(
+        "last packet received " +
+          _vm._s(this.lastFlush ? this.lastFlush.created_at : "")
+      )
     ])
   ])
 }

@@ -4,7 +4,7 @@
         <p>last congestion: {{ this.lastCongestion}}</p>
         <p>last clogged:  {{this.lastClogged}}</p>
         <p>packets received since startup {{ this.allFlushes.length }}  </p>
-        <p>last packet received {{ this.lastFlush.created_at }}</p>
+        <p>last packet received {{ this.lastFlush ? this.lastFlush.created_at : '' }}</p>
     </div>
 </template>
 
@@ -47,10 +47,10 @@ export default {
 
         updateLastFlush(data) {
             this.lastFlush = data[0];
-            //const lastCongestionObj = data.find(val => val.congestion == true)
-            //this.lastCongestion = lastCongestionObj ? lastCongestionObj.created_at : "";
-            //const lastCloggedObj = data.find(val => val.clogged == true)
-            //this.lastClogged = lastCloggedObj ? lastCloggedObj.created_at : "";
+            const lastCongestionObj = data.find(val => val.congestion == true)
+            this.lastCongestion = lastCongestionObj ? lastCongestionObj.created_at : "";
+            const lastCloggedObj = data.find(val => val.clogged == true)
+            this.lastClogged = lastCloggedObj ? lastCloggedObj.created_at : "";
         },
 
         async subscribe() {

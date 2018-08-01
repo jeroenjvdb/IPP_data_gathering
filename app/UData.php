@@ -19,4 +19,18 @@ class UData extends Model
         'address',
         'payload',
     ];
+
+    public $appends = [
+        'congestion',
+        'clogged',
+
+    ];
+
+    public function getCloggedAttribute() {
+        $this->attributes['status'] == 1;
+    }
+
+    public function getCongestionAttribute() {
+        $this->attributes['status'] == 2;
+    }
 }
