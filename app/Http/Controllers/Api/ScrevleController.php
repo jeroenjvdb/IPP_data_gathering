@@ -57,7 +57,7 @@ class ScrevleController extends Controller
 		];
 	} 
 
-	$urinals = $this->urinal->with(['data' => function($query) {
+	$urinals = $this->urinal->with(['uData' => function($query) {
 		return $query->orderBy('created_at', 'DESC')->limit(100);
 	}])->get();
 
@@ -85,7 +85,7 @@ class ScrevleController extends Controller
 
 	public function add(Request $request) 
 	{
-		if($substr(request->payload,0,2) != '0x') {
+		if(substr($request->payload,0,2) != '0x') {
 			return "false";
 		}
 	        Log::info('request', [$request->all()]);
@@ -128,7 +128,9 @@ class ScrevleController extends Controller
 		    't_evac'  => hexdec($data['t_evac']),
 		]);
 
-		$uFlush = $this->urinal->find($request->address)->uData()
+		$uFlush = $this->urinal->where('device',$request->address)
+			->first()
+			->uData()
 			->create($uData);
 
 		$channelName = 'flush.' . $flush->device_id;
