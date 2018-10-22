@@ -7,7 +7,7 @@
 <div class="row">
 @foreach($urinals as $urinal)
 <div class="col-md-4">
-<h2>device {{ $urinal->id }}</h2>
+<h2>device {{ $urinal->device }}</h2>
 
 <hr>
 

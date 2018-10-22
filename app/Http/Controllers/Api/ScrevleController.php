@@ -54,11 +54,11 @@ class ScrevleController extends Controller
 			'congestion' => hexdec(substr($parser->payload, 8, 2)),
 			'nb_mkey' => hexdec(substr($parser->payload, 10, 2)),
 			't_evac' => hexdec(substr($parser->payload, 14, 2)),
-			];
+		];
 	} 
 
 	$urinals = $this->urinal->with(['data' => function($query) {
-		return $query->orderBy('created_at', 'DESC');
+		return $query->orderBy('created_at', 'DESC')->limit(100);
 	}])->get();
 
 	foreach($urinals as $urinal) {
@@ -85,41 +85,44 @@ class ScrevleController extends Controller
 
 	public function add(Request $request) 
 	{
-        Log::info('request', [$request->all()]);
+		if($substr(request->payload,0,2) != '0x') {
+			return "false";
+		}
+	        Log::info('request', [$request->all()]);
 		$data = [
-			'nb_flush' => hexdec(substr($request->data, 2, 2)),
-			'clogged' => hexdec(substr($request->data, 6, 2)),
-			'congestion' => hexdec(substr($request->data, 8, 2)),
-			'nb_mkey' => hexdec(substr($request->data, 10, 2)),
-			't_evac' => hexdec(substr($request->data, 14, 2)),
+			'nb_flush' => hexdec(substr($request->payload, 2, 2)),
+			'clogged' => hexdec(substr($request->payload, 6, 2)),
+			'congestion' => hexdec(substr($request->payload, 8, 2)),
+			'nb_mkey' => hexdec(substr($request->payload, 10, 2)),
+			't_evac' => hexdec(substr($request->payload, 14, 2)),
 		];
 
 
 
 		$uData = [
-			'payload' => $request->data,
+			'payload' => $request->payload,
 			'address' => $request->address,	
-		    'type'    => $request->type,					
-			'nb_flush' => hexdec(substr($request->data, 2, 2)),
-			'nb_user' => hexdec(substr($request->data, 4, 2)),
-			'status' => hexdec(substr($request->data, 6, 2)),
-			'user_flush_time' => hexdec(substr($request->data, 8, 2)),
-			'key_present_ev' => hexdec($this->littleToBigEndian(substr($request->data, 10, 2))),
-			'flush_time' => hexdec($this->littleToBigEndian(substr($request->data, 14, 2))),
+	                'type'    => $request->type,					
+			'nb_flush' => hexdec(substr($request->payload, 2, 2)),
+			'nb_user' => hexdec(substr($request->payload, 4, 2)),
+			'status' => hexdec(substr($request->payload, 6, 2)),
+			'user_flush_time' => hexdec(substr($request->payload, 8, 2)),
+			'key_present_ev' => hexdec($this->littleToBigEndian(substr($request->payload, 10, 2))),
+			'flush_time' => hexdec($this->littleToBigEndian(substr($request->payload, 14, 2))),
 		];
 		Log::info('parsed request', $data);	
 
         $this->screvle->create([
-            'payload' => $request->data,
+            'payload' => $request->payload,
             'address' => $request->address,
             'type' => $request->type,
         ]);
 
-        $flush = $this->urinal->find($request->address)->data()->create([
-		    'payload' => $request->data,
+        $flush = $this->urinal->where('device',$request->address)->first()->data()->create([
+		    'payload' => $request->payload,
 		    'address' => $request->address,
 		    'type'    => $request->type,
-		    'nb_flush'=> hexdec($data['nb_flush']),
+		    'nb_flush'=> $data['nb_flush'],
 		    'clogged' => $data['clogged'] ? true : false,
 		    'nb_mkey' => $data['congestion'] ? true : false,
 		    't_evac'  => hexdec($data['t_evac']),
